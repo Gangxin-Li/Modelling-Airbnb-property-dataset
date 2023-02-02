@@ -33,17 +33,18 @@ def remove_rows_with_missing_ratings(table):
     # table.dropna(subset=['bathrooms'],inplace=True)
     return table
 
-# def clean_string(data):
-#     data = data[21:]
-#     data = data.split(" ''")
-#     return "".join(data.split())
+def clean_string(data):
+    data = data[21:]
+    return data
 def combine_description_strings(table):
     table.dropna(subset=['Description'],inplace=True)
     
     ### Task 1
+    # The "Description" column contains lists of strings. You'll need to define a function called combine_description_strings which combines the list items into the same string. Unfortunately, pandas doesn't recognise the values as lists, but as strings whose contents are valid Python lists. You should look up how to do this (don't implement a from-scratch solution to parse the string into a list). The lists contain many empty quotes which should be removed. If you don't remove them before joining the list elements with a whitespace, they might cause the result to contain multiple whitespaces in places. The function should take in the dataset as a pandas dataframe and return the same type. It should remove any records with a missing description, and also remove the "About this space" prefix which every description starts with.
+    table.apply(clean_string)
+
     # fig = msno.matrix(table)
     # plt.show()
-
     return table
 
 def set_default_feature_values(table):
@@ -58,6 +59,7 @@ def clean_tabular_data(table):
     table = combine_description_strings(table)
     table = set_default_feature_values(table)
     return table
+
 if __name__ == '__main__':
     table = pd.read_csv('./airbnb-property-listings/tabular_data/listing.csv')
     table = clean_tabular_data(table)
