@@ -31,6 +31,9 @@ def remove_rows_with_missing_ratings(table):
     # fig = msno.matrix(table)
     # plt.show()
     # table.dropna(subset=['bathrooms'],inplace=True)
+    print(table[table['guests']=='Somerford Keynes England United Kingdom'])
+    table = table.drop([586])
+    
     return table
 
 def clean_string(data):
@@ -59,9 +62,10 @@ def clean_tabular_data(table):
     table = combine_description_strings(table)
     table = set_default_feature_values(table)
     return table
-def load_airbnb(table):
+def load_airbnb():
     # print(type(table))
     # print(table.columns())
+    table = pd.read_csv('./clean_tabular_data.csv')
     labels = table['Price_Night']
     table.drop(columns=['Price_Night'])
     return table,labels
@@ -70,5 +74,5 @@ if __name__ == '__main__':
     table = pd.read_csv('./airbnb-property-listings/tabular_data/listing.csv')
     table = clean_tabular_data(table)
     table.to_csv('./clean_tabular_data.csv')
-    table,labels = load_airbnb(table)
+    table,labels = load_airbnb()
     print(table.columns)
