@@ -59,8 +59,16 @@ def clean_tabular_data(table):
     table = combine_description_strings(table)
     table = set_default_feature_values(table)
     return table
+def load_airbnb(table):
+    # print(type(table))
+    # print(table.columns())
+    labels = table['Price_Night']
+    table.drop(columns=['Price_Night'])
+    return table,labels
 
 if __name__ == '__main__':
     table = pd.read_csv('./airbnb-property-listings/tabular_data/listing.csv')
     table = clean_tabular_data(table)
     table.to_csv('./clean_tabular_data.csv')
+    table,labels = load_airbnb(table)
+    print(table.columns)
