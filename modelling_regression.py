@@ -141,10 +141,25 @@ def evaluate_all_models(models,table,label,grid):
     best = np.argmin(choose_model)
     return best_results[best]
 def find_best_model(address):
+    best_performance = np.inf
+    res = []
     for (dirpath, dirnames, filenames) in walk(address):
         for file in filenames:
-            print(file)
-
+            # print(dirpath,file)
+            
+            if file == "metrics.json":
+                with open( dirpath+'/'+file , "r" ) as read_content:
+                    metric = json.load(read_content)
+            if metric['predict_val']<best_performance:
+                best_performance = metric['predict_val']
+                model = joblib.load(dirpath+'/model.joblib')
+                with open( dirpath+'/hyperparameters.json' , "r" ) as read_content:
+                    hyperparameters = json.load(read_content)
+    
+                res = [model,hyperparameters,metric]
+    # print(res)
+    return res
+    
 if __name__ == "__main__":
     ### Version 1
     """

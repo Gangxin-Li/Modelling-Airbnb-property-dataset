@@ -62,12 +62,12 @@ def clean_tabular_data(table):
     table = combine_description_strings(table)
     table = set_default_feature_values(table)
     return table
-def load_airbnb():
+def load_airbnb(column = 'Price_Night'):
     # print(type(table))
     # print(table.columns())
     table = pd.read_csv('./clean_tabular_data.csv')
-    labels = table['Price_Night']
-    table.drop(columns=['Price_Night'])
+    labels = table[column]
+    table.drop(columns=[column])
     return table,labels
 
 if __name__ == '__main__':
