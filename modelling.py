@@ -15,8 +15,11 @@ from sklearn.metrics import mean_squared_error
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import AdaBoostRegressor
+from sklearn.ensemble import GradientBoostingRegressor
 import itertools
 import typing
+from os import walk
 """
 table,label = load_airbnb()
 columns = ['guests','beds','bathrooms','Cleanliness_rating','Accuracy_rating','Communication_rating','Location_rating','Check-in_rating','Value_rating','amenities_count','bedrooms']
@@ -114,7 +117,6 @@ def custom_tune_regression_model_hyperparameters(model,table,label,grid):
     print("RMSE (training):", RMSE_training)
     print("RMSE (validation):", RMSE_val)
     best_metrics = {'predict_train':RMSE_training, 'predict_val':RMSE_val}
-    save_model(best_model,best_hyperparams,best_metrics,classification = 'regression',folder = 'linear_regression')
     return best_model,best_hyperparams,best_metrics
 
 def save_model(model,hyperparameter,metrics,classification='regression',folder='linear_regression',root='models'):
@@ -130,6 +132,18 @@ def save_model(model,hyperparameter,metrics,classification='regression',folder='
     with open(path+'/metrics.json', 'w') as f:
         json.dump(metrics, f)
 
+def evaluate_all_models(models,table,label,grid):
+    best_results = []
+    for num in range(len(models)):
+        best_model,best_hyperparams,best_metrics = custom_tune_regression_model_hyperparameters(models[num],table,label,grid[num])
+        best_results.append([best_model,best_hyperparams,best_metrics])
+    choose_model = [x[2]['predict_val'] for x in best_results]
+    best = np.argmin(choose_model)
+    return best_results[best]
+def find_best_model(address):
+    for (dirpath, dirnames, filenames) in walk(address):
+        for file in filenames:
+            print(file)
 
 if __name__ == "__main__":
     ### Version 1
@@ -149,22 +163,35 @@ if __name__ == "__main__":
 
     custom_tune_regression_model_hyperparameters(model,(X_train,Y_train),(X_validation,y_validation),(X_test,y_test),hyperparameter)
 """
-    ### Version 2
-    table,label = load_airbnb()
-    columns = ['guests','beds','bathrooms','Cleanliness_rating','Accuracy_rating','Communication_rating','Location_rating','Check-in_rating','Value_rating','amenities_count','bedrooms']
-    table = table[columns]
-    grid={
-        'penalty':['l2','l1','elasticnet'],
-        'max_iter':[1000,2000,3000],
-        'learning_rate':['invscaling', 'adaptive', 'optimal', 'constant'],
-        'n_iter_no_change':[5,10]
-    }
-    model = SGDRegressor()
-    custom_tune_regression_model_hyperparameters(model,table,label,grid)
+    ### Version 2 in use
 
-    """grid = {
-    "n_estimators": [10, 50, 100],
-    "criterion": ["mse", "mae"],
-    "min_samples_leaf": [2, 1],}
-    """
-
+    # table,label = load_airbnb()
+    # columns = ['guests','beds','bathrooms','Cleanliness_rating','Accuracy_rating','Communication_rating','Location_rating','Check-in_rating','Value_rating','amenities_count','bedrooms']
+    # table = table[columns]
+    ### Linear regression
+    # grid={
+    #     'penalty':['l2','l1','elasticnet'],
+    #     'max_iter':[1000,2000,3000],
+    #     'learning_rate':['invscaling', 'adaptive', 'optimal', 'constant'],
+    #     'n_iter_no_change':[5,10]
+    # }
+    # model = SGDRegressor()
+    # best_model,best_hyperparams,best_metrics = custom_tune_regression_model_hyperparameters(model,table,label,grid)
+    # save_model(best_model,best_hyperparams,best_metrics,classification = 'regression',folder = 'linear_regression')
+    ### decision_tree
+    
+    # models = [DecisionTreeRegressor(),AdaBoostRegressor(),GradientBoostingRegressor()]
+    # grid_decision={
+    #     'max_depth':[500,1000,1500],
+    #     'max_features':[50,100,200],
+    #     'max_leaf_nodes':[1000,3000,5000,10000]
+    # }
+    # grid_ada={
+    #     'learning_rate':[1e-3,1e-4,1e-5],
+    #     'n_estimators':[200,300,400]
+    # }
+    # grid = [grid_decision,grid_ada,grid_ada]
+    # # best_model,best_hyperparams,best_metrics = custom_tune_regression_model_hyperparameters(models[2],table,label,grid)
+    # best_model,best_hyperparams,best_metrics=evaluate_all_models(models,table,label,grid)
+    # save_model(best_model,best_hyperparams,best_metrics,classification = 'regression',folder = 'decision_tree')
+    find_best_model('./models')
