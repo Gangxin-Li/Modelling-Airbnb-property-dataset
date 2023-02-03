@@ -15,6 +15,8 @@ from sklearn.metrics import mean_squared_error
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import GridSearchCV
+import itertools
+import typing
 """
 table,label = load_airbnb()
 columns = ['guests','beds','bathrooms','Cleanliness_rating','Accuracy_rating','Communication_rating','Location_rating','Check-in_rating','Value_rating','amenities_count','bedrooms']
@@ -32,6 +34,10 @@ print("R2 (scikit-learn):", r2_score(Y_test, y_hat))
 
 
 X_test, X_validation, y_test, y_validation = train_test_split(X_test, Y_test, test_size=0.3)
+"""
+
+
+### Version 1
 """
 def tune_regression_model_hyperparameters(model,training,hyperparameter):
     clf = GridSearchCV(model, hyperparameter)
@@ -69,8 +75,65 @@ def save_model(model,hyperparameter,metrics,model_file='models/regression/linear
         json.dump(hyperparameter, f)
     with open(model_file+'/metrics.json', 'w') as f:
         json.dump(metrics, f)
-    
+ """
+
+### Version 2
+### GridSearch from scratch
+
+def grid_search(hyperparameters: typing.Dict[str, typing.Iterable]):
+    keys, values = zip(*hyperparameters.items())
+    yield from (dict(zip(keys, v)) for v in itertools.product(*values))
+
+
+def custom_tune_regression_model_hyperparameters(model,table,label,grid):
+    X_train, X_validation, y_train, y_validation = train_test_split(table, label, test_size=0.2)
+
+    best_hyperparams, best_loss = None, np.inf
+
+    for hyperparams in grid_search(grid):
+        model = model.set_params(**hyperparams)
+        model.fit(X_train, y_train)
+
+        y_validation_pred = model.predict(X_validation)
+        validation_loss = mean_squared_error(y_validation, y_validation_pred)
+
+        print(f"H-Params: {hyperparams} Validation loss: {validation_loss}")
+        if validation_loss < best_loss:
+            best_loss = validation_loss
+            best_hyperparams = hyperparams
+
+    print(f"Best loss: {best_loss}")
+    print(f"Best hyperparameters: {best_hyperparams}")
+    ## Best model
+    best_model = model.set_params(**best_hyperparams)
+    best_model.fit(X_train,y_train)
+    predict_train = best_model.predict(X_train)
+    predict_val = best_model.predict(X_validation)
+    RMSE_training = mean_squared_error(y_train, predict_train, squared=False)
+    RMSE_val = mean_squared_error(y_validation, predict_val, squared=False)
+    print("RMSE (training):", RMSE_training)
+    print("RMSE (validation):", RMSE_val)
+    best_metrics = {'predict_train':RMSE_training, 'predict_val':RMSE_val}
+    save_model(best_model,best_hyperparams,best_metrics,classification = 'regression',folder = 'linear_regression')
+    return best_model,best_hyperparams,best_metrics
+
+def save_model(model,hyperparameter,metrics,classification='regression',folder='linear_regression',root='models'):
+    path = root+'/'+classification+'/'+folder
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print("Create folder: ",path)
+    else:
+        print("Save the file to: ",path)
+    joblib.dump(model, path+'/model.joblib')
+    with open(path+'/hyperparameters.json', 'w') as f:
+        json.dump(hyperparameter, f)
+    with open(path+'/metrics.json', 'w') as f:
+        json.dump(metrics, f)
+
+
 if __name__ == "__main__":
+    ### Version 1
+    """
     table,label = load_airbnb()
     columns = ['guests','beds','bathrooms','Cleanliness_rating','Accuracy_rating','Communication_rating','Location_rating','Check-in_rating','Value_rating','amenities_count','bedrooms']
     table = table[columns]
@@ -85,6 +148,23 @@ if __name__ == "__main__":
     }
 
     custom_tune_regression_model_hyperparameters(model,(X_train,Y_train),(X_validation,y_validation),(X_test,y_test),hyperparameter)
+"""
+    ### Version 2
+    table,label = load_airbnb()
+    columns = ['guests','beds','bathrooms','Cleanliness_rating','Accuracy_rating','Communication_rating','Location_rating','Check-in_rating','Value_rating','amenities_count','bedrooms']
+    table = table[columns]
+    grid={
+        'penalty':['l2','l1','elasticnet'],
+        'max_iter':[1000,2000,3000],
+        'learning_rate':['invscaling', 'adaptive', 'optimal', 'constant'],
+        'n_iter_no_change':[5,10]
+    }
+    model = SGDRegressor()
+    custom_tune_regression_model_hyperparameters(model,table,label,grid)
 
-
+    """grid = {
+    "n_estimators": [10, 50, 100],
+    "criterion": ["mse", "mae"],
+    "min_samples_leaf": [2, 1],}
+    """
 
