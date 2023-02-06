@@ -3,30 +3,9 @@ import numpy as np
 import plotly.express as px
 import missingno as msno
 import matplotlib.pyplot as plt
+
 def remove_rows_with_missing_ratings(table):
-    # table = pd.read_csv(address)
-    # print(table.columns)
 
-    #Check duplicated data
-    # print("duplicated data count: ",table.duplicated().sum())
-    # print(table.describe())
-    # print(table.info())
-
-    #Check zeros data
-    # questionable_columns = table.columns
-    # zero_counts = {col: 0 for col in questionable_columns}
-    # for col in questionable_columns:
-    #     zero_counts[col] = table[col][table[col] == 'Nan'].count()
-    # print(zero_counts)
-
-    # fig = px.histogram(table, "bathrooms")
-    # fig.show()
-    # print(table.describe())
-    # for col in questionable_columns:
-    #     table[col][table[col] == 0] = np.nan
-    # print(table.isnull().sum()/ table.count() * 100)
-    # fig = msno.matrix(table)
-    # plt.show()
     table.dropna(subset=['Value_rating'],inplace=True)
     # fig = msno.matrix(table)
     # plt.show()
