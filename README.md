@@ -207,7 +207,7 @@ def find_best_nn(config_list):
 ```
 
 
-## Milestone 2 Tune hyperparmeters
+## Milestone 3 Tune hyperparmeters
 
 - Custome tune hyerparmeters
 
@@ -362,6 +362,20 @@ def find_best_model(address):
 
 ## Conclusions
 
-- Maybe write a conclusion to the project, what you understood about it and also how you would improve it or take it further.
+### The workflow to build a model
 
-- Read through your documentation, do you understand everything you've written? Is everything clear and cohesive?
+- collect data from AWS/Azure/GCP ...
+
+- be familiar with the business plan
+
+- Using EDA to gain insightful ideas
+
+- Data preparation, data cleaning, treat missing values, detect outliers, covert data type
+
+- Build model, and find out the best performance
+
+- Build several model and tune hyperparmeters, and save it
+
+- Find the best performance model 
+
+- deploy it
