@@ -269,32 +269,8 @@ def tune_regression_model_hyperparameters(untuned_model, features, labels, dict_
     return best_model,best_hyperparameters, best_metric
 ```
 
-- save the model
 
-```python
-def save_model(model,hyperparameter,metrics,classification='classification',folder='logistic_regression',root='./airbnb-property-listings/models'):
-    """Saved the best model experiement
-
-    Takes in a model, hyperparameter,metrics, and target classification and foler.
-    Using joblib to save the model
-    Using json.dump to save the parameters.
-    """
-    
-    path = root+'/'+classification+'/'+folder
-    if not os.path.exists(path):
-        os.makedirs(path)
-        print("Create folder: ",path)
-    else:
-        print("Save the file to: ",path)
-    joblib.dump(model, path+'/model.joblib')
-    with open(path+'/hyperparameters.json', 'w') as f:
-        json.dump(hyperparameter, f)
-    with open(path+'/metrics.json', 'w') as f:
-        json.dump(metrics, f) 
-    
-```
-
-- Tune the regression model
+- Tune the Classification model
 
 ```python
 def tune_classification_model_hyperparameters(model, features, labels, dict_hyper):
@@ -329,6 +305,33 @@ def tune_classification_model_hyperparameters(model, features, labels, dict_hype
     print(best_metrics)
     return best_model,best_hyperparameters,best_metrics 
 ```
+
+
+- save the model
+
+```python
+def save_model(model,hyperparameter,metrics,classification='classification',folder='logistic_regression',root='./airbnb-property-listings/models'):
+    """Saved the best model experiement
+
+    Takes in a model, hyperparameter,metrics, and target classification and foler.
+    Using joblib to save the model
+    Using json.dump to save the parameters.
+    """
+    
+    path = root+'/'+classification+'/'+folder
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print("Create folder: ",path)
+    else:
+        print("Save the file to: ",path)
+    joblib.dump(model, path+'/model.joblib')
+    with open(path+'/hyperparameters.json', 'w') as f:
+        json.dump(hyperparameter, f)
+    with open(path+'/metrics.json', 'w') as f:
+        json.dump(metrics, f) 
+    
+```
+
 
 - Find the best model
 
