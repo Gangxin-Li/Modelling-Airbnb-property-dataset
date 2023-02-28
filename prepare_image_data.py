@@ -1,52 +1,37 @@
-# %%
+import cv2
+from os import walk
 import os
 import pandas as pd
-import boto3
-from PIL import Image
-
-s3 = boto3.client('s3',
-                  aws_access_key_id="#",
-                  aws_secret_access_key="#")
-
-bucket_url = "images/"
-
-
 def download_images():
-    alphabet = ["a", "b", "c", "d", "e"]
-    img_uuid_list = df["ID"]
-    for img_index in img_uuid_list[:1]:
-        url = bucket_url + str(img_index)
+    return 
 
-        for letter_index in range(len(alphabet)):
-            download_url = url + "-" + str(alphabet[letter_index]) + ".png"
-    # print(download_url)
+def resize_images(address,target_address):
+    if not os.path.exists(target_address):
+        os.makedirs(target_address)
+        print("Create default address:",target_address)
+    # shape = []
+    for (dirpath, dirnames, filenames) in walk(address):
+        for file in filenames:
+            # print(dirpath,dirnames,file)
+            img = cv2.imread(dirpath+'/'+file)
+            img = cv2.resize(img,(540,720),interpolation = cv2.INTER_AREA)
+            # print(target_address+'/'+dirnames[0]+'/'+file)
+            path = target_address+'/'+dirnames[0]
+            isExist = os.path.exists(path)
+            if not isExist:
+                os.makedirs(path)
+                print("Create folder: ",path)
+            cv2.imwrite(path+'/'+file, img)
+    #         shape.append(img.shape)
+    # table = pd.DataFrame(shape,columns=['height','weighth','channels'])
+    # print(table)
+    # # print(shape)
+    # print(table.info())
+    # print(table.describe())
 
-def resize_images():
-    img_uuid_list = df["ID"]
-    alphabet = ["a", "b", "c", "d", "e"]
-    for resize_index in img_uuid_list:
-        for letter_index in range(len(alphabet)):
-            img_name = str(resize_index) + "-" + str(alphabet[letter_index]) + ".png"
-            try:
-                resize_image = Image.open(f"c:\\Users\\denni\\Desktop\\AiCore\\Projects\\images\\{resize_index}\{img_name}")
-                new_image = resize_image.resize((720, 480))
-            except FileNotFoundError:
-                print("Image does not exist")
+    return
 
-            try:
-                os.mkdir(f"c:\\Users\\denni\\Desktop\\AiCore\\Projects\\modelling-airbnbs-property-listing-dataset-\\processed_images\{resize_index}")
-            
-            except FileExistsError:
-                print("Processed image folder already exists")
-
-            if new_image.mode == "RGB":
-                new_image.save(f"c:\\Users\\denni\\Desktop\\AiCore\\Projects\\modelling-airbnbs-property-listing-dataset-\\processed_images\{resize_index}\{img_name}")
-            else:
-                pass
 
 if __name__ == "__main__":
-    df = pd.read_csv(r"C:\Users\denni\Desktop\AiCore\Projects\tabular_data\clean_tabular_data.csv")
-    # download_images()
-    resize_images()
-    
-# %%
+    resize_images('./airbnb-property-listings/images','./airbnb-property-listings/processed_images')
+    pass
