@@ -1,24 +1,34 @@
 # Airbnb Property dataset
 
-> Tech: AWS, cv2, data cleaning, data modelling
+> Tech: AWS, cv2, data cleaning, data modelling, custome hyperparmeters tuning
 
 ### Task1 Load in the Tabular Dataset
 
-Tech: AWS, Pandas 
+Tech: AWS, Pandas
+
 Steps:
-Download data from AWS
-Load the dataset
-Remove the missing things
-raw text data processing
-clean tabular data
+
+- Download data from AWS
+
+- Load the dataset
+
+- Remove the missing things
+
+- raw text data processing
+
+- clean tabular data
 
 ### Task2 Load/process img Dataset
 
 Tech: cv2, AWS
+
 Steps:
-Download data from AWS
-resize image data
-convert into RG
+
+- Download data from AWS
+
+- resize image data
+
+- convert into RG
 
 ## Milestone 1 Data Preparation
 
@@ -43,7 +53,10 @@ def resize_images(address,target_address):
 
 ```
 
+
 ## Milestone 2 Create Regression model
+
+### Task3 Build Regression/Classification model
 
 - Create a simple regression model as a base line
 
@@ -145,7 +158,7 @@ def get_nn_config():
     """Loads config .yaml file from directory
 
     """
-    with open(r"C:\\Users\\denni\\Desktop\\AiCore\\Projects\\modelling-airbnbs-property-listing-dataset-\nn_config.yaml", "r") as file:
+    with open(r"path\nn_config.yaml", "r") as file:
         config = yaml.safe_load(file)
     
     return config
