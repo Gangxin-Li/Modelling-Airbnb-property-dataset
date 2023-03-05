@@ -1,6 +1,6 @@
 # Airbnb Property dataset
 
-> Tech: AWS, cv2, data cleaning, data modelling, custome hyperparmeters tuning
+> Tech: AWS, cv2, Pytorch, Scikit-Learn, data cleaning, data modelling, custome hyperparmeters tuning
 
 ### Task1 Load in the Tabular Dataset
 
@@ -32,8 +32,14 @@ Steps:
 
 ## Milestone 1 Data Preparation
 
+From prepare_image_data.py
+
 ```python
 def resize_images(address,target_address):
+    """resize the images size
+
+    change all of the images into (540,720) sizes, and store it into folder.
+    """
     if not os.path.exists(target_address):
         os.makedirs(target_address)
         print("Create default address:",target_address)
@@ -68,8 +74,16 @@ def resize_images(address,target_address):
 
 - Build Logistic regression model
 
+from neural_network.py
+
 ```python
 class LinearRegression(torch.nn.Module):
+    """LinerRegression 
+    
+    build linear regression by the pytorch, using input layer,
+    activation_function to build a basic logistic regression, and using 
+    model deepth to control the deepth of the layer.
+    """
     def __init__(self, config):
         super().__init__()
         self.layers = torch.nn.Sequential()
@@ -86,13 +100,15 @@ class LinearRegression(torch.nn.Module):
 
 - Train the model
 
+from neural_network.py
+
 ```python
 def train(model, dataloader, epoch, config):
     """Training loop for the neural network
 
     Chooses the optimiser to use based on the randomly generated
     config. Trains model iteratively by the number given for the
-    epoch and 
+    epoch
     """
     start_time = time.time()
     dt_now = datetime.now()
@@ -152,6 +168,8 @@ def train(model, dataloader, epoch, config):
 ```
 
 - Load parameters from ymal and tunning it
+
+from neural_network.py
 
 ```python
 def get_nn_config():
@@ -224,6 +242,8 @@ def find_best_nn(config_list):
 
 - Custome tune hyerparmeters
 
+from modelling.py
+
 ```python
 def grid_search(hyperparameters: typing.Dict[str, typing.Iterable]):
     keys, values = zip(*hyperparameters.items())
@@ -261,6 +281,8 @@ def custome_tune_regression_model_hyperparameters(model, features, label, dict_h
 
 - Tune the regression model
 
+from modelling.py
+
 ```python
 def tune_regression_model_hyperparameters(untuned_model, features, labels, dict_hyper):
     """Returns best tuned hyperparameters
@@ -284,6 +306,8 @@ def tune_regression_model_hyperparameters(untuned_model, features, labels, dict_
 
 
 - Tune the Classification model
+
+from modelling.py
 
 ```python
 def tune_classification_model_hyperparameters(model, features, labels, dict_hyper):
@@ -322,6 +346,8 @@ def tune_classification_model_hyperparameters(model, features, labels, dict_hype
 
 - save the model
 
+from modelling.py
+
 ```python
 def save_model(model,hyperparameter,metrics,classification='classification',folder='logistic_regression',root='./airbnb-property-listings/models'):
     """Saved the best model experiement
@@ -348,8 +374,15 @@ def save_model(model,hyperparameter,metrics,classification='classification',fold
 
 - Find the best model
 
+from modelling.py
+
 ```python
 def find_best_model(address):
+    """find the best model
+    
+    for-each models we built, and using theri metrics to evaulate which
+    model has the best performacne. and return this model.
+    """
     best_performance = np.inf
     res = []
     for (dirpath, dirnames, filenames) in os.walk(address):

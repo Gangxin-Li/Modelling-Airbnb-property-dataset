@@ -6,6 +6,10 @@ def download_images():
     return 
 
 def resize_images(address,target_address):
+    """resize the images size
+    
+    change all of the images into (540,720) sizes, and store it into folder.
+    """
     if not os.path.exists(target_address):
         os.makedirs(target_address)
         print("Create default address:",target_address)

@@ -43,6 +43,12 @@ test_loader = DataLoader(test_dataset, batch_size=4)
 val_loader = DataLoader(val_dataset, batch_size=4)
 
 class LinearRegression(torch.nn.Module):
+    """LinerRegression 
+    
+    build linear regression by the pytorch, using input layer,
+    activation_function to build a basic logistic regression, and using 
+    model deepth to control the deepth of the layer.
+    """
     def __init__(self, config):
         super().__init__()
         self.layers = torch.nn.Sequential()
@@ -124,7 +130,7 @@ def get_nn_config():
     """Loads config .yaml file from directory
 
     """
-    with open(r"C:\\Users\\denni\\Desktop\\AiCore\\Projects\\modelling-airbnbs-property-listing-dataset-\nn_config.yaml", "r") as file:
+    with open(r"path\n_config.yaml", "r") as file:
         config = yaml.safe_load(file)
     
     return config
@@ -179,8 +185,8 @@ def find_best_nn(config_list):
             best_config = config
             best_metrics_dict = best_metrics
 
-    os.mkdir(f"C:\\Users\\denni\\Desktop\\AiCore\\Projects\\modelling-airbnbs-property-listing-dataset-\\models\\regression\\neural_networks\{dt_string}")
-    torch.save(best_model.state_dict, f"C:\\Users\\denni\\Desktop\\AiCore\\Projects\\modelling-airbnbs-property-listing-dataset-\\models\\regression\\neural_networks\\{dt_string}\model.pt")
+    os.mkdir(f"path\{dt_string}")
+    torch.save(best_model.state_dict, f"path\\{dt_string}\model.pt")
     return best_config, best_metrics_dict, dt_string, best_model
 
 if __name__ == "__main__":
