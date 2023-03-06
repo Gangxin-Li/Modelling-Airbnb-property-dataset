@@ -94,6 +94,11 @@ def save_model(model,hyperparameter,metrics,classification='classification',fold
     
 
 def find_best_model(address):
+    """find the best model
+    
+    for-each models we built, and using theri metrics to evaulate which
+    model has the best performacne. and return this model.
+    """
     best_performance = np.inf
     res = []
     for (dirpath, dirnames, filenames) in os.walk(address):
